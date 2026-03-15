@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Progress Pulse Pro | Streak & Mastery</title>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
+            --primary: #38bdf8; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --neutral: #334155;
+            --gold: #ffd700;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
+        .app-container { width: 100%; max-width: 900px; background: var(--card); padding: 30px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        
+        header { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 2.2rem; margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Achievement Section */
+        .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--neutral); }
+        .streak-fire { font-size: 1.5rem; color: var(--warning); font-weight: bold; }
+        .badge-locked { opacity: 0.3; filter: grayscale(1); }
+        .badge-unlocked { opacity: 1; filter: grayscale(0); animation: glow 1.5s infinite alternate; }
+
+        @keyframes glow { from { box-shadow: 0 0 5px var(--gold); } to { box-shadow: 0 0 20px var(--gold); } }
+
+        /* Color Key */
+        .legend { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; font-size: 0.8rem; }
+        .key { display: flex; align-items: center; gap: 5px; }
+        .dot { width: 12px; height: 12px; border-radius: 3px; }
+
+        /* Grid */
+        .pulse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18px, 1fr)); gap: 5px; margin: 20px 0; }
+        .day-pulse { width: 18px; height: 18px; background: var(--neutral); border-radius: 4px; font-size: 8px; display: flex; align-items: center; justify-content: center; color: #64748b; transition: 0.3s; }
+        
+        /* Scores */
+        .score-red { background: var(--danger) !important; color: white !important; }
+        .score-orange { background: var(--warning) !important; color: white !important; }
+        .score-green { background: var(--success) !important; color: white !important; }
+
+        .setup-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--primary); }
+        select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--neutral); background: var(--bg); color: white; margin-top: 10px; }
+        
+        .status-banner { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 20px; border: 1px solid var(--danger); color: var(--danger); }
+        .active-mode { border-color: var(--success); color: var(--success); background: rgba(34, 197, 94, 0.1); }
+
+        #quiz-zone { display: none; margin-top: 20px; }
+        .q-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+        .score-box { text-align: center; padding: 20px; font-size: 2rem; font-weight: bold; }
+        
+        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--primary); color: var(--bg); font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        button:hover { filter: brightness(1.2); }
+        .download-btn { background: var(--neutral); color: white; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>Progress Pulse</h1>
+        <div class="legend">
+            <div class="key"><div class="dot" style="background:var(--danger)"></div> Red (&lt;50%)</div>
+            <div class="key"><div class="dot" style="background:var(--warning)"></div> Orange (70%+)</div>
+            <div class="key"><div class="dot" style="background:var(--success)"></div> Green (85%+)</div>
+        </div>
+    </header>
+
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div id="streak-val" class="streak-fire">🔥 0 Days</div>
+            <small>Current Streak</small>
+        </div>
+        <div class="stat-card" id="badge-card">
+            <div id="badge-icon" class="badge-locked" style="font-size: 1.5rem;">🏆</div>
+            <small id="badge-text">Streak Master Locked</small>
+        </div>
+    </div>
+
+    <div id="banner" class="status-banner">STATUS: NOT WORKING</div>
+
+    <div class="setup-box">
+        <label><b>Target Course:</b></label>
+        <select id="course">
+            <option>Python Coding</option>
+            <option>Mathematics</option>
+            <option>Physics</option>
+            <option>General Learning</option>
+        </select>
+        <div style="margin-top:15px;">
+            <input type="checkbox" id="tick" onchange="toggleStudy()"> <b>Start Study Session</b>
+        </div>
+    </div>
+
+    <div class="pulse-grid" id="grid"></div>
+
+    <div id="quiz-zone">
+        <div class="q-item">
+            <label><b>Daily Summary:</b></label>
+            <textarea id="summary" placeholder="What core concept did you master?"></textarea>
+        </div>
+        
+        <div id="questions-container"></div>
+
+        <div class="score-box">
+            Learning Score: <span id="displayScore">0</span>%
+        </div>
+
+        <button onclick="lockDay()">Lock Today's Pulse</button>
+        <button class="download-btn" onclick="downloadReport()">Download Report (TXT)</button>
+    </div>
+</div>
+
+<script>
+    const quizSet = [
+        "What was the main topic today?",
+        "Explain it like I am 5 years old.",
+        "What was the hardest part to learn?",
+        "Write down one important key term.",
+        "How will you use this in the future?",
+        "What is one thing you still don't understand?",
+        "If you had to test someone on this, what's Q1?",
+        "How does this relate to yesterday's topic?",
+        "What was the most interesting part?",
+        "Give a real-world example of this."
+    ];
+
+    let currentStreak = 0;
+
+    window.onload = () => {
+        const grid = document.getElementById('grid');
+        for(let i=1; i<=365; i++) {
+            const d = document.createElement('div');
+            d.className = 'day-pulse';
+            d.id = 'd-' + i;
+            d.innerText = i;
+            grid.appendChild(d);
+        }
+
+        const container = document.getElementById('questions-container');
+        quizSet.forEach((q, i) => {
+            container.innerHTML += `
+                <div class="q-item">
+                    <label>Q${i+1}: ${q}</label>
+                    <textarea class="ans" oninput="liveUpdate()" placeholder="Type answer..."></textarea>
+                </div>
+            `;
+        });
+    };
+
+    function toggleStudy() {
+        const isTicked = document.getElementById('tick').checked;
+        document.getElementById('quiz-zone').style.display = isTicked ? 'block' : 'none';
+        const banner = document.getElementById('banner');
+        banner.innerText = isTicked ? "WORKING ON " + document.getElementById('course').value.toUpperCase() : "STATUS: NOT WORKING";
+        banner.className = isTicked ? "status-banner active-mode" : "status-banner";
+    }
+
+    function liveUpdate() {
+        const answers = document.querySelectorAll('.ans');
+        let count = 0;
+        answers.forEach(a => { if(a.value.trim().length > 5) count++; });
+        document.getElementById('displayScore').innerText = (count * 10);
+    }
+
+    function lockDay() {
+        const score = parseInt(document.getElementById('displayScore').innerText);
+        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+        const dayEl = document.getElementById('d-' + dayOfYear);
+
+        dayEl.classList.remove('score-red', 'score-orange', 'score-green');
+
+        if (score >= 85) {
+            dayEl.classList.add('score-green');
+            currentStreak++;
+            updateAchievement();
+            alert("🔥 MASTERY! Pulse turns GREEN.");
+        } else if (score >= 70) {
+            dayEl.classList.add('score-orange');
+            currentStreak++;
+            updateAchievement();
+            alert("⚡ GOOD! Pulse turns ORANGE.");
+        } else {
+            dayEl.classList.add('score-red');
+            currentStreak = 0; // Streak breaks on low performance!
+            updateAchievement();
+            alert("⚠️ LOW SCORE. Pulse turns RED. Streak reset.");
+        }
+    }
+
+    function updateAchievement() {
+        document.getElementById('streak-val').innerText = `🔥 ${currentStreak} Days`;
+        const icon = document.getElementById('badge-icon');
+        const text = document.getElementById('badge-text');
+        
+        if (currentStreak >= 7) {
+            icon.className = "badge-unlocked";
+            text.innerText = "PULSE MASTER UNLOCKED!";
+            text.style.color = "var(--gold)";
+        } else {
+            icon.className = "badge-locked";
+            text.innerText = (7 - currentStreak) + " days to Mastery";
+        }
+    }
+
+    function downloadReport() {
+        let content = "PROGRESS PULSE LOG\n" + new Date().toDateString() + "\n";
+        content += "Course: " + document.getElementById('course').value + "\n\n";
+        const answers = document.querySelectorAll('.ans');
+        quizSet.forEach((q, i) => {
+            content += `Q: ${q}\nA: ${answers[i].value}\n\n`;
+        });
+        const blob = new Blob([content], { type: "text/plain" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "Pulse_Report.txt";
+        link.click();
+    }
+</script>
+
+</body>
+</html>
