@@ -2,221 +2,154 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Progress Pulse Pro | Streak & Mastery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Pulse Pro | Global Academy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root {
-            --bg: #0f172a; --card: #1e293b; --text: #f8fafc;
-            --primary: #38bdf8; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --neutral: #334155;
-            --gold: #ffd700;
-        }
-
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; }
-        .app-container { width: 100%; max-width: 900px; background: var(--card); padding: 30px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        
-        header { text-align: center; margin-bottom: 20px; }
-        h1 { font-size: 2.2rem; margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Achievement Section */
-        .stats-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid var(--neutral); }
-        .streak-fire { font-size: 1.5rem; color: var(--warning); font-weight: bold; }
-        .badge-locked { opacity: 0.3; filter: grayscale(1); }
-        .badge-unlocked { opacity: 1; filter: grayscale(0); animation: glow 1.5s infinite alternate; }
-
-        @keyframes glow { from { box-shadow: 0 0 5px var(--gold); } to { box-shadow: 0 0 20px var(--gold); } }
-
-        /* Color Key */
-        .legend { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; font-size: 0.8rem; }
-        .key { display: flex; align-items: center; gap: 5px; }
-        .dot { width: 12px; height: 12px; border-radius: 3px; }
-
-        /* Grid */
-        .pulse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18px, 1fr)); gap: 5px; margin: 20px 0; }
-        .day-pulse { width: 18px; height: 18px; background: var(--neutral); border-radius: 4px; font-size: 8px; display: flex; align-items: center; justify-content: center; color: #64748b; transition: 0.3s; }
-        
-        /* Scores */
-        .score-red { background: var(--danger) !important; color: white !important; }
-        .score-orange { background: var(--warning) !important; color: white !important; }
-        .score-green { background: var(--success) !important; color: white !important; }
-
-        .setup-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--primary); }
-        select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--neutral); background: var(--bg); color: white; margin-top: 10px; }
-        
-        .status-banner { padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 20px; border: 1px solid var(--danger); color: var(--danger); }
-        .active-mode { border-color: var(--success); color: var(--success); background: rgba(34, 197, 94, 0.1); }
-
-        #quiz-zone { display: none; margin-top: 20px; }
-        .q-item { background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; margin-bottom: 10px; }
-        .score-box { text-align: center; padding: 20px; font-size: 2rem; font-weight: bold; }
-        
-        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: var(--primary); color: var(--bg); font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
-        button:hover { filter: brightness(1.2); }
-        .download-btn { background: var(--neutral); color: white; }
+        :root { --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        body { background: #050505; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 1.5rem; }
+        .input-style { background: #111; border: 1px solid #333; color: white; border-radius: 0.5rem; padding: 10px; width: 100%; }
+        .pulse-day { width: 15px; height: 15px; border-radius: 3px; background: #222; }
+        .green { background: #22c55e; box-shadow: 0 0 10px #22c55e; }
+        .hidden { display: none; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-10">
 
-<div class="app-container">
-    <header>
-        <h1>Progress Pulse</h1>
-        <div class="legend">
-            <div class="key"><div class="dot" style="background:var(--danger)"></div> Red (&lt;50%)</div>
-            <div class="key"><div class="dot" style="background:var(--warning)"></div> Orange (70%+)</div>
-            <div class="key"><div class="dot" style="background:var(--success)"></div> Green (85%+)</div>
-        </div>
-    </header>
-
-    <div class="stats-bar">
-        <div class="stat-card">
-            <div id="streak-val" class="streak-fire">🔥 0 Days</div>
-            <small>Current Streak</small>
-        </div>
-        <div class="stat-card" id="badge-card">
-            <div id="badge-icon" class="badge-locked" style="font-size: 1.5rem;">🏆</div>
-            <small id="badge-text">Streak Master Locked</small>
-        </div>
+    <div id="auth-section" class="max-w-md mx-auto mt-20 glass-card p-8 text-center">
+        <h2 class="text-3xl font-bold mb-6">Create Account</h2>
+        <input type="text" id="username" placeholder="Full Name" class="input-style mb-4">
+        <input type="email" id="useremail" placeholder="Email Address" class="input-style mb-4">
+        <button onclick="handleSignUp()" class="w-full bg-blue-600 hover:bg-blue-700 py-3 rounded-lg font-bold">Launch My Platform</button>
     </div>
 
-    <div id="banner" class="status-banner">STATUS: NOT WORKING</div>
+    <div id="main-dashboard" class="hidden max-w-6xl mx-auto">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-2xl font-bold text-blue-400">Welcome, <span id="display-name">Learner</span></h1>
+                <p class="text-gray-400">Global Course Tracker v2.0</p>
+            </div>
+            <div class="text-right">
+                <div id="streak-count" class="text-2xl">🔥 0 Days</div>
+            </div>
+        </header>
 
-    <div class="setup-box">
-        <label><b>Target Course:</b></label>
-        <select id="course">
-            <option>Python Coding</option>
-            <option>Mathematics</option>
-            <option>Physics</option>
-            <option>General Learning</option>
-        </select>
-        <div style="margin-top:15px;">
-            <input type="checkbox" id="tick" onchange="toggleStudy()"> <b>Start Study Session</b>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-card p-6">
+                <h3 class="text-xl font-semibold mb-4 text-blue-300">Target Course</h3>
+                <input list="courses" id="course-input" placeholder="Search any course (UPSC, AI, Data...)" class="input-style mb-4">
+                <datalist id="courses">
+                    <option value="UPSC: Indian Polity (M. Laxmikanth)">
+                    <option value="UPSC: Geography (GC Leong)">
+                    <option value="Data Scientist: Python & ML">
+                    <option value="Data Analyst: SQL & PowerBI">
+                    <option value="Full Stack: React & Node.js">
+                    <option value="Stock Market: Technical Analysis">
+                    <option value="Digital Marketing: SEO & SEM">
+                    <option value="Artificial Intelligence: LLMs & Neural Networks">
+                </datalist>
+                
+                <h3 class="text-xl font-semibold mb-4 text-blue-300">Today's Topic</h3>
+                <input type="text" id="topic-input" placeholder="What specifically are you studying?" class="input-style">
+                <button onclick="startSession()" class="w-full mt-4 bg-green-600 py-2 rounded-lg font-bold">Start Study Session</button>
+            </div>
+
+            <div id="study-zone" class="md:col-span-2 glass-card p-6 hidden">
+                <h2 class="text-2xl font-bold mb-4">Dynamic Recall: <span id="current-topic-display" class="text-yellow-400"></span></h2>
+                <div id="quiz-container" class="space-y-4">
+                    </div>
+                <button onclick="submitDay()" class="mt-8 w-full bg-blue-600 py-4 rounded-xl font-bold text-lg">Lock Today's Knowledge</button>
+            </div>
+        </div>
+
+        <div class="mt-10 glass-card p-6">
+            <h3 class="mb-4 text-gray-400">Your Learning Pulse (365 Days)</h3>
+            <div id="pulse-grid" class="flex flex-wrap gap-1"></div>
         </div>
     </div>
-
-    <div class="pulse-grid" id="grid"></div>
-
-    <div id="quiz-zone">
-        <div class="q-item">
-            <label><b>Daily Summary:</b></label>
-            <textarea id="summary" placeholder="What core concept did you master?"></textarea>
-        </div>
-        
-        <div id="questions-container"></div>
-
-        <div class="score-box">
-            Learning Score: <span id="displayScore">0</span>%
-        </div>
-
-        <button onclick="lockDay()">Lock Today's Pulse</button>
-        <button class="download-btn" onclick="downloadReport()">Download Report (TXT)</button>
-    </div>
-</div>
 
 <script>
-    const quizSet = [
-        "What was the main topic today?",
-        "Explain it like I am 5 years old.",
-        "What was the hardest part to learn?",
-        "Write down one important key term.",
-        "How will you use this in the future?",
-        "What is one thing you still don't understand?",
-        "If you had to test someone on this, what's Q1?",
-        "How does this relate to yesterday's topic?",
-        "What was the most interesting part?",
-        "Give a real-world example of this."
-    ];
-
-    let currentStreak = 0;
-
-    window.onload = () => {
-        const grid = document.getElementById('grid');
-        for(let i=1; i<=365; i++) {
-            const d = document.createElement('div');
-            d.className = 'day-pulse';
-            d.id = 'd-' + i;
-            d.innerText = i;
-            grid.appendChild(d);
-        }
-
-        const container = document.getElementById('questions-container');
-        quizSet.forEach((q, i) => {
-            container.innerHTML += `
-                <div class="q-item">
-                    <label>Q${i+1}: ${q}</label>
-                    <textarea class="ans" oninput="liveUpdate()" placeholder="Type answer..."></textarea>
-                </div>
-            `;
-        });
-    };
-
-    function toggleStudy() {
-        const isTicked = document.getElementById('tick').checked;
-        document.getElementById('quiz-zone').style.display = isTicked ? 'block' : 'none';
-        const banner = document.getElementById('banner');
-        banner.innerText = isTicked ? "WORKING ON " + document.getElementById('course').value.toUpperCase() : "STATUS: NOT WORKING";
-        banner.className = isTicked ? "status-banner active-mode" : "status-banner";
+    // 1. SIGNUP LOGIC
+    function handleSignUp() {
+        const name = document.getElementById('username').value;
+        if(!name) return alert("Please enter your name");
+        localStorage.setItem('user_name', name);
+        localStorage.setItem('isLoggedIn', 'true');
+        showDashboard();
     }
 
-    function liveUpdate() {
-        const answers = document.querySelectorAll('.ans');
-        let count = 0;
-        answers.forEach(a => { if(a.value.trim().length > 5) count++; });
-        document.getElementById('displayScore').innerText = (count * 10);
+    function showDashboard() {
+        document.getElementById('auth-section').classList.add('hidden');
+        document.getElementById('main-dashboard').classList.remove('hidden');
+        document.getElementById('display-name').innerText = localStorage.getItem('user_name');
+        generateGrid();
     }
 
-    function lockDay() {
-        const score = parseInt(document.getElementById('displayScore').innerText);
-        const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
-        const dayEl = document.getElementById('d-' + dayOfYear);
-
-        dayEl.classList.remove('score-red', 'score-orange', 'score-green');
-
-        if (score >= 85) {
-            dayEl.classList.add('score-green');
-            currentStreak++;
-            updateAchievement();
-            alert("🔥 MASTERY! Pulse turns GREEN.");
-        } else if (score >= 70) {
-            dayEl.classList.add('score-orange');
-            currentStreak++;
-            updateAchievement();
-            alert("⚡ GOOD! Pulse turns ORANGE.");
-        } else {
-            dayEl.classList.add('score-red');
-            currentStreak = 0; // Streak breaks on low performance!
-            updateAchievement();
-            alert("⚠️ LOW SCORE. Pulse turns RED. Streak reset.");
-        }
-    }
-
-    function updateAchievement() {
-        document.getElementById('streak-val').innerText = `🔥 ${currentStreak} Days`;
-        const icon = document.getElementById('badge-icon');
-        const text = document.getElementById('badge-text');
+    // 2. SESSION LOGIC
+    function startSession() {
+        const topic = document.getElementById('topic-input').value;
+        if(!topic) return alert("Enter the topic you are studying today!");
         
-        if (currentStreak >= 7) {
-            icon.className = "badge-unlocked";
-            text.innerText = "PULSE MASTER UNLOCKED!";
-            text.style.color = "var(--gold)";
-        } else {
-            icon.className = "badge-locked";
-            text.innerText = (7 - currentStreak) + " days to Mastery";
+        document.getElementById('current-topic-display').innerText = topic;
+        document.getElementById('study-zone').classList.remove('hidden');
+        generateQuiz(topic);
+    }
+
+    // 3. DYNAMIC 10 QUESTIONS (Based on study topic)
+    function generateQuiz(topic) {
+        const container = document.getElementById('quiz-container');
+        const questions = [
+            `What is the fundamental definition of ${topic}?`,
+            `What are the top 3 components/pillars of ${topic}?`,
+            `How does ${topic} apply to real-world industries?`,
+            `Explain the most complex part of ${topic} simply.`,
+            `What is one thing you didn't know about ${topic} before today?`,
+            `If you were an expert in ${topic}, how would you solve a problem with it?`,
+            `What are the historical or theoretical roots of ${topic}?`,
+            `Write down one formula, key term, or date related to ${topic}.`,
+            `What is the biggest challenge in mastering ${topic}?`,
+            `Summarize today's study in 10 words.`
+        ];
+        
+        container.innerHTML = questions.map((q, i) => `
+            <div class="p-4 border-b border-white/5">
+                <p class="text-sm text-gray-400 mb-2">Question ${i+1}</p>
+                <p class="font-medium mb-2">${q}</p>
+                <textarea class="input-style text-sm h-20" placeholder="Type your answer based on your study..."></textarea>
+            </div>
+        `).join('');
+    }
+
+    // 4. PERSISTENCE (Grid & Streaks)
+    function generateGrid() {
+        const grid = document.getElementById('pulse-grid');
+        for(let i=0; i<365; i++) {
+            const day = document.createElement('div');
+            day.className = 'pulse-day';
+            day.id = 'day-' + i;
+            grid.appendChild(day);
+        }
+        loadProgress();
+    }
+
+    function submitDay() {
+        const today = new Date().getDay() + (new Date().getMonth() * 30); // Rough day index
+        localStorage.setItem('day-' + today, 'done');
+        alert("Knowledge Locked! Pulse turned Green.");
+        loadProgress();
+    }
+
+    function loadProgress() {
+        for(let i=0; i<365; i++) {
+            if(localStorage.getItem('day-' + i)) {
+                document.getElementById('day-' + i).classList.add('green');
+            }
         }
     }
 
-    function downloadReport() {
-        let content = "PROGRESS PULSE LOG\n" + new Date().toDateString() + "\n";
-        content += "Course: " + document.getElementById('course').value + "\n\n";
-        const answers = document.querySelectorAll('.ans');
-        quizSet.forEach((q, i) => {
-            content += `Q: ${q}\nA: ${answers[i].value}\n\n`;
-        });
-        const blob = new Blob([content], { type: "text/plain" });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "Pulse_Report.txt";
-        link.click();
-    }
+    // Check login on load
+    if(localStorage.getItem('isLoggedIn')) showDashboard();
 </script>
-
 </body>
 </html>
